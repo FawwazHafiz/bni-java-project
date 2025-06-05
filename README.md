@@ -120,7 +120,8 @@ CREATE TABLE users (
 
 - Spring Boot Docs: https://spring.io/projects/spring-boot  
 - Oracle JDBC Docs: https://docs.oracle.com/en/database/oracle  
-- Spring Security Password Encoding: https://www.baeldung.com/spring-security-registration-password-encoding  
+- Spring Security Password Encoding: https://www.baeldung.com/spring-security-registration-password-encoding
+- 
 
 ---
 
