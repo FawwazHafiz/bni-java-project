@@ -22,25 +22,28 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public String register(String username, String password) {
+    public String register(String username, String email, String password) {
         if (repo.existsByUsername(username)) {
             return "User already exists";
         }
-
+    
         User user = new User();
         user.setUsername(username);
-        user.setPasswordHash(encoder.encode(password));
-        user.setRole("USER");
+        user.setEmailAddress(email);
+        user.setPassword(encoder.encode(password));
         user.setCreatedAt(OffsetDateTime.now());
+        user.setUpdatedAt(OffsetDateTime.now());
+        user.setIsActive(true); // default true
         repo.save(user);
-
+    
         return "Registered successfully";
     }
+    
 
     public String login(String username, String password) {
         Optional<User> user = repo.findByUsername(username);
-        if (user.isPresent() && encoder.matches(password, user.get().getPasswordHash())) {
-            return jwtUtil.generateToken(username, user.get().getRole());
+        if (user.isPresent() && encoder.matches(password, user.get().getPassword())) {
+            return jwtUtil.generateToken(username, "USER"); // role hardcoded karena tidak ada di DB
         }
 
         return null;
