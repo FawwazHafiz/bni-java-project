@@ -1,6 +1,6 @@
 pipeline{
     agent any
-    environtment{
+    environment{
         PROJECT_NAME = "fawwazhafiz-dev"
         BUILD_NAME = "java-bni-project-git"
     }
