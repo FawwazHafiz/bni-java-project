@@ -2,43 +2,47 @@ package com.bni.bni.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty; // Import this
 
 @Entity
-@Table(name = "profiles") // Sesuaikan dengan nama tabel di database Anda
+@Table(name = "profiles")
 public class Profile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
+    @JsonIgnore // Pertahankan ini untuk mengabaikan seluruh objek User
+    private User user;
 
-    @Column(name = "first_name", length = 255)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name", length = 255)
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "place_of_birth", length = 255)
+    @Column(name = "place_of_birth")
     private String placeOfBirth;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "created_at")
-    private ZonedDateTime createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
 
-    @Column(name = "updated_at")
-    private ZonedDateTime updatedAt;
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt;
 
-    // Constructors, Getters, and Setters
     public Profile() {
     }
 
-    public Profile(Long userId, String firstName, String lastName, String placeOfBirth, LocalDate dateOfBirth, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
-        this.userId = userId;
+    public Profile(User user, String firstName, String lastName, String placeOfBirth, LocalDate dateOfBirth, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+        this.user = user;
         this.firstName = firstName;
         this.lastName = lastName;
         this.placeOfBirth = placeOfBirth;
@@ -47,7 +51,8 @@ public class Profile {
         this.updatedAt = updatedAt;
     }
 
-    // Getters and Setters
+    // --- Getters and Setters for all fields ---
+
     public Long getId() {
         return id;
     }
@@ -56,12 +61,18 @@ public class Profile {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    // Tambahkan getter baru untuk userId
+    @JsonProperty("userId") // Ini akan membuat properti "userId" di JSON
+    public Long getUserId() {
+        return (this.user != null) ? this.user.getId() : null;
     }
 
     public String getFirstName() {
@@ -96,19 +107,19 @@ public class Profile {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public ZonedDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(ZonedDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public ZonedDateTime getUpdatedAt() {
+    public OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(ZonedDateTime updatedAt) {
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 }
