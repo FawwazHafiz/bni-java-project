@@ -26,15 +26,17 @@ jobs:
     - name: Start OpenShift Build
       run: |
         oc start-build "${{secrets.OC_BUILD_NAME}}" -n "${{secrets.OC_NAMESPACE}}" --wait --follow
-        
-       notify:
-          runs-on: ubuntu-latest
-          steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-              
-            - name: Send Telegram Notification
-              run: |
-                curl -X POST "https://api.telegram.org/bot7734850655:AAHvXf0Zxahgr9zHRS9Cmd-U1T8HuilcJ6I/sendMessage" \
-                  -d chat_id=1110339224 \
-                  -d text="🚨 Merge to Main/Master Branch 🚨\nA merge has been made to the main/master branch. Please review the changes!"
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: trigger-build  # ⬅️ hanya jalan kalau trigger-build selesai
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Send Telegram Notification
+      run: |
+        curl -X POST "https://api.telegram.org/bot7734850655:AAHvXf0Zxahgr9zHRS9Cmd-U1T8HuilcJ6I/sendMessage" \
+          -d chat_id=1110339224 \
+          -d text="🚨 Merge to Master Branch 🚨%0AOpenShift build has been triggered and completed successfully."
